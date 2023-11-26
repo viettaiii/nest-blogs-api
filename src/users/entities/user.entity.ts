@@ -1,6 +1,14 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import * as argon from 'argon2';
 import * as jwt from 'jsonwebtoken';
+import { Blog } from 'src/blogs/entities/blog.entity';
+import { Comment } from 'src/comments/entities/comment.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -14,6 +22,12 @@ export class User {
 
   @Column({ nullable: false })
   password: string;
+
+  @OneToMany(() => Blog, (blog) => blog.user, { cascade: true })
+  blogs: Blog[];
+
+  @OneToMany(() => Comment, (comment) => comment.user, { cascade: true })
+  comments: Comment[];
 
   @BeforeInsert()
   async hashPassword() {
